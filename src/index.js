@@ -15,6 +15,7 @@ const UrlShortening = mongoose.model("url", {
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+app.use(express.static(__dirname + "/public"));
 
 app.get("/", (req, res) => {
   ejs.renderFile(
@@ -50,8 +51,20 @@ app.post("/url", async (req, res) => {
   }
 });
 
+function cleanUrl(url) {
+  let preSlash = url.split("/")[0];
+  let postSlash = url.split("/")[1];
+
+  preSlash.replace("http://", "");
+  preSlash.replace("https://", "");
+
+  preSlash = preSlash.toLowerCase();
+
+  const cleanedUrl = `${preSlash}/${postSlash}`;
+}
+
 app.get("/a", (req, res) => {
-  res.redirect("google.com");
+  res.redirect("http://google.com");
 });
 
 async function verifyCaptcha(req) {

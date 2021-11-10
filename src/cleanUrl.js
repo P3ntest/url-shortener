@@ -9,11 +9,11 @@ module.exports = {
       url = url + "/";
     }
 
+    url = url.replace("http://", "");
+    url = url.replace("https://", "");
+
     let preSlash = url.split("/")[0];
     let postSlash = url.split("/")[1];
-
-    preSlash.replace("http://", "");
-    preSlash.replace("https://", "");
 
     preSlash = preSlash.toLowerCase();
 

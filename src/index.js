@@ -62,8 +62,6 @@ app.post("/url", async (req, res) => {
 
   //Start of the if statements
 
-  console.log(existingUrl, short);
-
   if (existingUrl && !short) {
     //if short is not provided and url already exists use existing
 
@@ -111,8 +109,42 @@ app.post("/url", async (req, res) => {
   });
 });
 
-app.get("/a", (req, res) => {
-  res.redirect("http://google.com");
+app.get("/:url", (req, res) => {
+  const short = req.params.url;
+  UrlShortening.findOne({ shortUrl: short }, (err, data) => {
+    if (err) {
+      console.log(err);
+    } else {
+      if (data) {
+        res.redirect("http://" + data.originalUrl);
+      } else {
+        res.status(404).send({
+          status: 404,
+          message: "Short url not found",
+          error_code: 4,
+        });
+      }
+    }
+  });
+});
+
+app.get("/view/:url", (req, res) => {
+  const short = req.params.url;
+  UrlShortening.findOne({ shortUrl: short }, (err, data) => {
+    if (err) {
+      console.log(err);
+    } else {
+      if (data) {
+        res.send(data.originalUrl);
+      } else {
+        res.status(404).send({
+          status: 404,
+          message: "Short url not found",
+          error_code: 4,
+        });
+      }
+    }
+  });
 });
 
 async function verifyCaptcha(req) {

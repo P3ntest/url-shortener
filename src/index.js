@@ -7,7 +7,12 @@ const { cleanUrl } = require("./cleanUrl");
 
 const app = express();
 
-mongoose.connect(process.env.MONGO);
+mongoose
+  .connect(process.env.MONGO)
+  .then(() => {
+    console.log("connected");
+  })
+  .catch((err) => console.log(err));
 
 const UrlShortening = mongoose.model("url", {
   originalUrl: String,
@@ -175,4 +180,6 @@ async function verifyCaptcha(req) {
   });
 }
 
-app.listen(process.env.PORT ?? 8000);
+app.listen(process.env.PORT ?? 8000, () => {
+  console.log("listening");
+});

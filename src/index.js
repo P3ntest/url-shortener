@@ -3,6 +3,7 @@ const express = require("express");
 const request = require("request");
 const ejs = require("ejs");
 const mongoose = require("mongoose");
+const { cleanUrl } = require("./cleanUrl");
 
 const app = express();
 
@@ -34,34 +35,81 @@ app.get("/", (req, res) => {
 app.post("/url", async (req, res) => {
   const captcha = await verifyCaptcha(req);
   if (!captcha) {
-    res.status(409).send("Captcha failed");
+    res.status(409).send({
+      status: 409,
+      message: "Invalid Captcha",
+      error_code: 1,
+    });
     return;
   }
 
   let { url, short } = req.body;
 
+  const cleanedUrl = cleanUrl(url);
+
+  if (!cleanedUrl) {
+    res.status(400).send({
+      error: "Invalid URL",
+      status: 400,
+      error_code: 2,
+    });
+    return;
+  }
+
+  const existingUrl = await UrlShortening.findOne({
+    originalUrl: cleanedUrl,
+  }).exec();
+
+  //Start of the if statements
+
+  console.log(existingUrl, short);
+
+  if (existingUrl && !short) {
+    //if short is not provided and url already exists use existing
+
+    res.status(200).send({
+      status: 200,
+      short: existingUrl.shortUrl,
+    });
+    return;
+  }
+
+  //We know we have to generate a new short url
+
   if (!short) {
-    //generate random 5 character string
+    //Make sure we have a short
+    // If user did not provide short url generate one
     const chars =
       "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
     short = "";
     for (let i = 0; i < 5; i++) {
-      result += chars.charAt(Math.floor(Math.random() * chars.length));
+      short += chars.charAt(Math.floor(Math.random() * chars.length));
     }
   }
+
+  // Check if short exists ==> error
+  const existingShort = await UrlShortening.findOne({
+    shortUrl: short,
+  }).exec();
+  if (existingShort != null) {
+    res.status(400).send({
+      status: 400,
+      message: "Short url already exists",
+      error_code: 3,
+    });
+    return;
+  }
+
+  const newUrl = new UrlShortening({
+    originalUrl: cleanedUrl,
+    shortUrl: short,
+  }).save();
+
+  res.status(200).send({
+    status: 200,
+    short: short,
+  });
 });
-
-function cleanUrl(url) {
-  let preSlash = url.split("/")[0];
-  let postSlash = url.split("/")[1];
-
-  preSlash.replace("http://", "");
-  preSlash.replace("https://", "");
-
-  preSlash = preSlash.toLowerCase();
-
-  const cleanedUrl = `${preSlash}/${postSlash}`;
-}
 
 app.get("/a", (req, res) => {
   res.redirect("http://google.com");

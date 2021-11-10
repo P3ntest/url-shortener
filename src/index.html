@@ -23,10 +23,14 @@
       $("#comment_form").submit(function () {
         $(this).ajaxSubmit({
           error: function (xhr) {
-            status("Error: " + xhr.status);
+            const error = JSON.parse(xhr.responseText).error;
+            const errorCode = JSON.parse(xhr.responseText).error_code; // 1: captcha error 2: url invalid 3: short exists
+
+            // @Jasper hier ist errorCode und error nachricht
           },
           success: function (response) {
-            console.log(response);
+            const short = response.short;
+            // @Jasper hier ist dein code wenn es geklappt hat
           },
         });
         return false;

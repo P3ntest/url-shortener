@@ -50,6 +50,8 @@ app.post("/url", async (req, res) => {
 
   let { url, short } = req.body;
 
+  console.log(url);
+
   const cleanedUrl = cleanUrl(url);
 
   if (!cleanedUrl) {

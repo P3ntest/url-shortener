@@ -6,12 +6,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>P3ntest's Url Shortener</title>
     <script src="https://www.google.com/recaptcha/api.js"></script>
+    <link rel="stylesheet" href="index.css" />
   </head>
   <body>
     <form id="comment_form" action="/url" method="post">
       <input type="text" name="url" placeholder="Original Url" />
       <input type="text" name="short" placeholder="Short" />
-      <div class="g-recaptcha" data-sitekey="<%= captcha_key %>"></div>
+      <div
+        class="g-recaptcha"
+        data-sitekey="<%= captcha_key %>"
+        data-theme="dark"
+      ></div>
       <br />
       <input type="submit" name="submit" value="Register" /><br /><br />
     </form>

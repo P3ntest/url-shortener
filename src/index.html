@@ -7,6 +7,7 @@
     <title>P3ntest's Url Shortener</title>
     <script src="https://www.google.com/recaptcha/api.js"></script>
     <link rel="stylesheet" href="index.css" />
+    <link rel="stylesheet" href="ribbon.css" />
   </head>
   <body>
     <h1>Url Shortener 🦫</h1>
@@ -29,6 +30,12 @@
         value="Big Ass Short Button"
       /><br /><br />
     </form>
+
+    <span id="forkongithub">
+      <a href="https://github.com/p3ntest/url-shortener"
+        >Fork me on GitHub</a
+      ></span
+    >
   </body>
   <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
   <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery.form/3.51/jquery.form.min.js"></script>
@@ -46,7 +53,7 @@
                 : errorCode === 2
                 ? "Please enter a valid url"
                 : errorCode === 3
-                ? "Please enter a valid short"
+                ? "Short is already in use"
                 : error;
 
             grecaptcha.reset();

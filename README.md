@@ -1,6 +1,6 @@
 # Url Shortener 🦫
 
-Selfhosted Url Shortener: [Live example](u.p3ntest.dev)
+Selfhosted Url Shortener: [Live example](https://u.p3ntest.dev)
 
 Build with express and mongoDb
 

@@ -9,6 +9,11 @@
     <link rel="stylesheet" href="index.css" />
   </head>
   <body>
+    <h1>Url Shortener</h1>
+    <!-- Error message box -->
+    <div id="error-box" class="error-box" style="display: none">
+      <p id="error-message"></p>
+    </div>
     <form id="comment_form" action="/url" method="post">
       <input type="text" name="url" placeholder="Original Url" />
       <input type="text" name="short" placeholder="Short" />
@@ -18,7 +23,11 @@
         data-theme="dark"
       ></div>
       <br />
-      <input type="submit" name="submit" value="Register" /><br /><br />
+      <input
+        type="submit"
+        name="submit"
+        value="Big Ass Short Button"
+      /><br /><br />
     </form>
   </body>
   <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
@@ -31,13 +40,27 @@
             const error = JSON.parse(xhr.responseText).error;
             const errorCode = JSON.parse(xhr.responseText).error_code; // 1: captcha error 2: url invalid 3: short exists
 
+            const errorMessage =
+              errorCode === 1
+                ? "Please verify that you are not a robot"
+                : errorCode === 2
+                ? "Please enter a valid url"
+                : errorCode === 3
+                ? "Please enter a valid short"
+                : error;
+
+            grecaptcha.reset();
+
+            //display error box
+            $("#error-box").show();
+            $("#error-message").text(errorMessage);
+
             // @Jasper hier ist errorCode und error nachricht
-            alert(error);
           },
           success: function (response) {
             const short = response.short;
             // @Jasper hier ist dein code wenn es geklappt hat
-            alert(short);
+            window.location.replace("/shorted.html?short=" + short);
           },
         });
         return false;

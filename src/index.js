@@ -4,6 +4,7 @@ const request = require("request");
 const ejs = require("ejs");
 const mongoose = require("mongoose");
 const { cleanUrl } = require("./cleanUrl");
+const path = require("path");
 
 const app = express();
 
@@ -21,7 +22,7 @@ const UrlShortening = mongoose.model("url", {
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use(express.static(__dirname + "/public"));
+app.use(express.static(path.join(__dirname, "../public")));
 
 app.get("/", (req, res) => {
   ejs.renderFile(
@@ -49,8 +50,6 @@ app.post("/url", async (req, res) => {
   }
 
   let { url, short } = req.body;
-
-  console.log(url);
 
   const cleanedUrl = cleanUrl(url);
 

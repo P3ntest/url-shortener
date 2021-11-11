@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>P3ntest's Url Shortener</title>
+    <link rel="stylesheet" href="index.css" />
+  </head>
+  <body>
+    <h1>Success!</h1>
+
+    <p>
+      Your shortened url is: <br />
+
+      <a href="" id="url">https://u.p3ntest.dev/3t9vF</a>
+    </p>
+    <a href="/"><button>Shorten another URL</button></a>
+  </body>
+
+  <script>
+    function GetURLParameter(sParam) {
+      var sPageURL = window.location.search.substring(1);
+      var sURLVariables = sPageURL.split("&");
+      for (var i = 0; i < sURLVariables.length; i++) {
+        var sParameterName = sURLVariables[i].split("=");
+        if (sParameterName[0] == sParam) {
+          return sParameterName[1];
+        }
+      }
+
+      return "";
+    }
+
+    let url = window.location.origin + "/" + GetURLParameter("short");
+
+    document.getElementById("url").href = url;
+    document.getElementById("url").innerHTML = url;
+  </script>
+</html>

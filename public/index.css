@@ -78,3 +78,14 @@ span {
   color: #4a80ff;
   cursor: pointer;
 }
+
+footer {
+  position: fixed;
+  bottom: 0;
+  width: 100vw;
+  left: 0;
+  text-align: center;
+  padding: 0.5rem 0;
+  font-size: 1.2rem;
+  color: #888;
+}

@@ -14,13 +14,18 @@ body {
 input,
 button {
   outline: none;
-  background-color: #444;
+  background-color: #555;
   border-radius: 10px;
   border: none;
   color: white;
   padding: 1rem;
   font-size: 1.5rem;
   margin: 1rem;
+  transition: transform ease-in-out 0.2s;
+}
+
+input:focus {
+  transform: scale(1.05);
 }
 
 input[type="submit"],

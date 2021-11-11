@@ -13,7 +13,9 @@
     <p>
       Your shortened url is: <br />
 
-      <a href="" id="url">https://u.p3ntest.dev/3t9vF</a>
+      <a href="" id="url">https://u.p3ntest.dev/3t9vF</a> <br />
+
+      <span id="ctc">(Copy to Clipboard)</span>
     </p>
     <a href="/"><button>Shorten another URL</button></a>
   </body>
@@ -36,5 +38,11 @@
 
     document.getElementById("url").href = url;
     document.getElementById("url").innerHTML = url;
+
+    document.getElementById("ctc").addEventListener("click", function () {
+      navigator.clipboard.writeText(url).then(function () {
+        alert("Copied to clipboard.");
+      });
+    });
   </script>
 </html>

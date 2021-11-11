@@ -1,10 +1,15 @@
 # Url Shortener 🦫
 
-Selfhosted Url Shortener: [Live example](https://u.p3ntest.dev)
+Selfhosted Url Shortener with Google ReCaptcha to prevent spam.
+
+[Live example](https://u.p3ntest.dev)
 
 Build with express and mongoDb
 
 ## Hosting
+
+Register a Google ReCaptcha V3 Site and store the key and secret in the environment variables.
+
 The project is dockerized. User `docker build . -t p3ntest/url` to build the image.
 
 ## Environment Variables

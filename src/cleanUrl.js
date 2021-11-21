@@ -13,7 +13,8 @@ module.exports = {
     url = url.replace("https://", "");
 
     let preSlash = url.split("/")[0];
-    let postSlash = url.split("/")[1];
+
+    let postSlash = url.substr(url.indexOf("/") + 1);
 
     preSlash = preSlash.toLowerCase();
 

@@ -2,23 +2,19 @@ require("dotenv").config();
 const express = require("express");
 const request = require("request");
 const ejs = require("ejs");
-const mongoose = require("mongoose");
 const { cleanUrl } = require("./cleanUrl");
 const path = require("path");
+const { createClient } = require("redis");
+
+const redis = createClient({
+  url: process.env.REDIS,
+});
+
+redis.on("error", (err) => console.log("Redis Client Error", err));
+
+redis.connect().then(() => console.log("Redis, connected"));
 
 const app = express();
-
-mongoose
-  .connect(process.env.MONGO)
-  .then(() => {
-    console.log("connected");
-  })
-  .catch((err) => console.log(err));
-
-const UrlShortening = mongoose.model("url", {
-  originalUrl: String,
-  shortUrl: String,
-});
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -62,24 +58,6 @@ app.post("/url", async (req, res) => {
     return;
   }
 
-  const existingUrl = await UrlShortening.findOne({
-    originalUrl: cleanedUrl,
-  }).exec();
-
-  //Start of the if statements
-
-  if (existingUrl && !short) {
-    //if short is not provided and url already exists use existing
-
-    res.status(200).send({
-      status: 200,
-      short: existingUrl.shortUrl,
-    });
-    return;
-  }
-
-  //We know we have to generate a new short url
-
   if (!short) {
     //Make sure we have a short
     // If user did not provide short url generate one
@@ -92,10 +70,9 @@ app.post("/url", async (req, res) => {
   }
 
   // Check if short exists ==> error
-  const existingShort = await UrlShortening.findOne({
-    shortUrl: short,
-  }).exec();
-  if (existingShort != null) {
+  const existing = await redis.get("short:" + short);
+
+  if (existing != null) {
     res.status(400).send({
       status: 400,
       message: "Short url already exists",
@@ -104,10 +81,7 @@ app.post("/url", async (req, res) => {
     return;
   }
 
-  const newUrl = new UrlShortening({
-    originalUrl: cleanedUrl,
-    shortUrl: short,
-  }).save();
+  await redis.set("short:" + short, cleanedUrl);
 
   res.status(200).send({
     status: 200,
@@ -115,42 +89,23 @@ app.post("/url", async (req, res) => {
   });
 });
 
-app.get("/:url", (req, res) => {
+app.get("/:url", async (req, res) => {
   const short = req.params.url;
-  UrlShortening.findOne({ shortUrl: short }, (err, data) => {
-    if (err) {
-      console.log(err);
-    } else {
-      if (data) {
-        res.redirect("http://" + data.originalUrl);
-      } else {
-        res.status(404).send({
-          status: 404,
-          message: "Short url not found",
-          error_code: 4,
-        });
-      }
-    }
-  });
+  const url = await redis.get("short:" + short);
+  if (url) res.redirect("https://" + url);
+  else
+    res.status(404).send({
+      status: 404,
+      message: "Short url not found",
+      error_code: 4,
+    });
 });
 
-app.get("/view/:url", (req, res) => {
+app.get("/api/:url", async (req, res) => {
   const short = req.params.url;
-  UrlShortening.findOne({ shortUrl: short }, (err, data) => {
-    if (err) {
-      console.log(err);
-    } else {
-      if (data) {
-        res.send(data.originalUrl);
-      } else {
-        res.status(404).send({
-          status: 404,
-          message: "Short url not found",
-          error_code: 4,
-        });
-      }
-    }
-  });
+  const url = await redis.get("short:" + short);
+  if (url) res.send(JSON.stringify(url));
+  else res.status(404).send(JSON.stringify(null));
 });
 
 async function verifyCaptcha(req) {
